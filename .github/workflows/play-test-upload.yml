@@ -12,6 +12,7 @@ on:
       - 'gradle.properties'
       - 'gradlew'
       - 'gradlew.bat'
+      - '.github/workflows/play-test-upload.yml'
   workflow_dispatch:
     inputs:
       track:
