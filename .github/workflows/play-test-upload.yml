@@ -58,7 +58,13 @@ jobs:
           distribution: temurin
           java-version: '21'
       - name: Install Android SDK packages
-        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+        run: |
+          sdkmanager_path="${ANDROID_SDK_ROOT:-$ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager"
+          if [[ ! -x "$sdkmanager_path" ]]; then
+            echo "::error::Android sdkmanager was not found at $sdkmanager_path"
+            exit 1
+          fi
+          "$sdkmanager_path" 'platforms;android-36' 'build-tools;36.0.0'
       - name: Test and sign the app bundle
         env:
           KEYSTORE: ${{ secrets.BASAYIN_UPLOAD_KEYSTORE_BASE64 }}
