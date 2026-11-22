@@ -2,7 +2,7 @@
 
 Package `app.basayin.android`. Choose **App**, **Free**, and **Books & Reference**. Set Hebrew as the default language (`iw-IL` in Play metadata) and add English (US) as a translation. The book text is in Hebrew in both interface languages.
 
-Upload the icon, feature graphic, and both phone screenshots from `play/graphics/`. Use the confirmed public HTTPS URL for `docs/privacy/index.html`. Enter the developer support email from the owner's Play account or ask the owner which public support email to use.
+Upload the icon, feature graphic, and both phone screenshots from `play/graphics/`. Enter the [public Android privacy policy](https://bas-ayin-android-privacy.glad-horse-8503.chatgpt.site/) in Play Console. Enter the developer support email from the owner's Play account or ask the owner which public support email to use.
 
 ## Hebrew
 

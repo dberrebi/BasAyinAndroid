@@ -135,6 +135,10 @@ fun AboutScreen(years: String) {
                 "הקריאה והחיפוש זמינים ללא חיבור לאינטרנט. היסטוריית הקריאה, המועדפים וההגדרות נשמרים במכשיר בלבד. קישורי המקורות נפתחים בדפדפן.",
                 "Reading and search work offline. Reading history, favourites, and settings are stored on this device. Source links open in your browser.",
             ))
+            SourceLink(
+                string("מדיניות הפרטיות", "Privacy policy"),
+                "https://bas-ayin-android-privacy.glad-horse-8503.chatgpt.site/",
+            )
         }
     }
 }
