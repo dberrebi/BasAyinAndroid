@@ -24,7 +24,7 @@ Install `app/build/outputs/apk/debug/app-debug.apk` on an Android 8.0 (API 26) o
 
 The application ID is `app.basayin.android`. The app stores reading progress, favourites, and preferences on-device. It has no internet permission, analytics, or account.
 
-The [release guide](play/RELEASING.md) covers signing, Play Console, and the optional GitHub testing workflow. [Hebrew and English listing copy](play/store-listing.md) and the [privacy policy](docs/privacy/index.html) are included.
+Once Play signing and GitHub secrets are configured, app changes pushed to `main` are tested and uploaded to Google Play internal testing. See the [release guide](play/RELEASING.md), [Hebrew and English listing copy](play/store-listing.md), and [privacy policy](docs/privacy/index.html).
 
 ## Shared data and attribution
 

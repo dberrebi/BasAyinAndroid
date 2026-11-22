@@ -29,9 +29,11 @@ Verify that `jarsigner` reports a signed, verified bundle and that its signer ce
 - Use the owner's approved support email. For the current build, the app works without accounts or special access, has no internet permission, ads, SDK for analytics, or in-app purchases, and stores favourites, history, and settings locally. External links and sharing run when the user requests them. Verify the final artifact against these facts before answering Play's Data safety and Ads forms.
 - Complete Content rating, Target audience, availability countries, any regional trader declaration, and other account-specific forms with the owner as needed. The Jerusalem 2001 Sefaria edition is [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). Keep the distribution free of ads and purchases and retain its attribution.
 
-## Optional GitHub Actions uploads after initial setup
+## Automatic Google Play testing uploads from GitHub
 
-Use the [manual GitHub workflow](../.github/workflows/play-test-upload.yml) once the app exists in Play Console and its upload key is registered. It targets **internal testing** or the default **closed testing** track (`alpha`), uses a draft release by default, and never targets production. If Play Console uses a different closed track, use the browser unless the workflow is updated with the actual track ID.
+After the first signed upload has registered the upload key and Play Console allows completed internal releases, the [GitHub workflow](../.github/workflows/play-test-upload.yml) runs for pushes to `main` that change the app, the bundled data, or the Gradle build. It runs unit tests and release lint, builds and signs the bundle, and rolls it out to **internal testers**. Listing copy, privacy policy, and other documentation changes are handled separately.
+
+To start an upload manually, open **Actions → Upload Bas Ayin to Play testing → Run workflow**. Choose **internal testing** or the default **closed testing** track (`alpha`), and a draft or completed testing release. The manual defaults are internal and draft. Use Play Console if your closed track has a different ID. Production promotion is handled in Play Console.
 
 Create or select a service account with the Google Play Android Developer API enabled for its Google Cloud project. Invite it in Play Console with **app-level testing release access for Bas Ayin only**. Add these values through GitHub **Settings → Secrets and variables → Actions** for the Bas Ayin repository. Retain access restrictions on the upload key and account.
 
@@ -42,5 +44,8 @@ Create or select a service account with the Google Play Android Developer API en
 | `BASAYIN_UPLOAD_PASSWORD` secret | The keystore password |
 | `BASAYIN_UPLOAD_KEY_PASSWORD` optional secret | Separate key password if used |
 | `BASAYIN_UPLOAD_ALIAS` optional variable | Key alias if it differs from `upload` |
+| `BASAYIN_PLAY_VERSION_CODE_BASE` optional variable | Version-code offset, `100` by default |
 
-The workflow uses `100 + GITHUB_RUN_NUMBER` as the code. Start it only when that yields a new code above the version already in Play. After an upload, promote the tested version from Play Console when ready and eligible. A service account with only testing access cannot promote it to production.
+Check the first run under **Actions** and verify the version in Play Console under **Testing → Internal testing**. If a required secret is missing, the workflow stops with setup instructions. If Play requires draft releases while the app is being set up, finish the internal release in Play Console before relying on automatic uploads.
+
+Each workflow run uses the configured version-code offset plus its GitHub run number. If a manual upload has used a higher code, set `BASAYIN_PLAY_VERSION_CODE_BASE` to at least the highest code Play has seen before the next run. Start a new run after a successful upload to get a new code. Promote a tested version from Play Console when ready and eligible.

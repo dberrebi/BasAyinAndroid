@@ -1,6 +1,17 @@
 name: Upload Bas Ayin to Play testing
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'data/**'
+      - 'gradle/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
   workflow_dispatch:
     inputs:
       track:
@@ -16,6 +27,10 @@ on:
 
 permissions:
   contents: read
+
+defaults:
+  run:
+    shell: bash
 
 concurrency:
   group: bas-ayin-play-upload
@@ -51,19 +66,29 @@ jobs:
           BASAYIN_UPLOAD_PASSWORD: ${{ secrets.BASAYIN_UPLOAD_PASSWORD }}
           BASAYIN_UPLOAD_KEY_PASSWORD: ${{ secrets.BASAYIN_UPLOAD_KEY_PASSWORD || secrets.BASAYIN_UPLOAD_PASSWORD }}
           BASAYIN_UPLOAD_ALIAS: ${{ vars.BASAYIN_UPLOAD_ALIAS || 'upload' }}
+          VERSION_CODE_BASE: ${{ vars.BASAYIN_PLAY_VERSION_CODE_BASE || '100' }}
         run: |
+          if [[ ! "$VERSION_CODE_BASE" =~ ^(0|[1-9][0-9]{0,9})$ ]]; then
+            echo '::error::BASAYIN_PLAY_VERSION_CODE_BASE must be a nonnegative integer.'
+            exit 1
+          fi
+          version_code=$((VERSION_CODE_BASE + GITHUB_RUN_NUMBER))
+          if (( version_code < 1 || version_code > 2100000000 )); then
+            echo '::error::The calculated version code is outside the Google Play range.'
+            exit 1
+          fi
           umask 077
           printf '%s' "$KEYSTORE" | base64 --decode > "$BASAYIN_UPLOAD_KEYSTORE"
           unset KEYSTORE
           ./gradlew --no-daemon :app:testDebugUnitTest :app:lintRelease :app:bundleRelease \
-            -Pbasayin.versionCode="$((100 + GITHUB_RUN_NUMBER))"
-          jarsigner -verify app/build/outputs/bundle/release/app-release.aab
+            -Pbasayin.versionCode="$version_code"
+          jarsigner -J-Duser.language=en -verify app/build/outputs/bundle/release/app-release.aab | grep -F 'jar verified.'
       - name: Upload the testing release
         uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
         with:
           serviceAccountJsonPlainText: ${{ secrets.BASAYIN_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: app.basayin.android
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          tracks: ${{ inputs.track }}
-          status: ${{ inputs.status }}
+          tracks: ${{ inputs.track || 'internal' }}
+          status: ${{ inputs.status || 'completed' }}
           whatsNewDirectory: play/whatsnew
