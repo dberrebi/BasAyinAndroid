@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bas Ayin</string>
+    <color name="bas_ayin_blue">#111D33</color>
+    <style name="Theme.BasAyin" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/bas_ayin_blue</item>
+        <item name="android:colorAccent">#C6A15B</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
