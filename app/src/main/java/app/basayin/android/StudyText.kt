@@ -118,6 +118,12 @@ fun readerPortionTitle(language: Language, sections: List<Section>, reading: Rea
 fun portionShareText(language: Language, portionTitle: String): String =
     "${appTitle(language)}\n$portionTitle"
 
+/** Shown on the home card when Continue reading cannot open a passage. */
+fun resumePlaceholder(language: Language, savedPlaceMissing: Boolean): String = Title(
+    if (savedPlaceMissing) "המיקום השמור אינו נמצא בספר" else "עדיין אין מיקום שמור",
+    if (savedPlaceMissing) "The saved place is not in this edition" else "No saved place yet",
+).inLanguage(language)
+
 fun studyNumber(value: Int, language: Language): String {
     if (language == Language.English || value !in 1..999) return value.toString()
     val ones = " אבגדהוזחט"

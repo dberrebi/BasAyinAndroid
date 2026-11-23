@@ -52,6 +52,16 @@ class StudyTextTest {
     }
 
     @Test
+    fun continueReadingExplainsAnEmptyOrMissingPlace() {
+        assertEquals("עדיין אין מיקום שמור", resumePlaceholder(Language.Hebrew, savedPlaceMissing = false))
+        assertEquals("No saved place yet", resumePlaceholder(Language.English, savedPlaceMissing = false))
+        assertEquals(
+            "The saved place is not in this edition",
+            resumePlaceholder(Language.English, savedPlaceMissing = true),
+        )
+    }
+
+    @Test
     fun portionShareUsesTheSectionOrTheCombinedWeek() {
         assertEquals("בת עין\nבראשית", portionShareText(Language.Hebrew, "בראשית"))
         assertEquals("Bas Ayin\nBereshit", portionShareText(Language.English, "Bereshit"))
