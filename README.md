@@ -16,6 +16,8 @@ Use JDK 17 or 21 and Android SDK Platform 36 with Build Tools 36.0.0. Open the r
 ./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
 ```
 
+Pull requests and pushes to `main` run those unit tests and debug lint in GitHub Actions. That check does not sign the app or upload it to Play.
+
 Install `app/build/outputs/apk/debug/app-debug.apk` on an Android 8.0 (API 26) or newer device. With an emulator or device connected, run the tests for the bundled edition, SQLite search, and regional calendars.
 
 ```sh
