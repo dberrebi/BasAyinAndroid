@@ -192,8 +192,8 @@ fun HelpScreen() {
             ))
             ListHeading(string("המשך קריאה ומועדפים", "Resume and save passages"))
             InfoText(string(
-                "המקום האחרון נשמר אחרי עצירה קצרה בקריאה. לחצו על הכוכב ליד פסקה כדי לשמור אותה. מתפריט הפסקה ניתן להעתיק או לשתף אותה עם מקורה.",
-                "Your place is saved after a short pause. Tap the star by a paragraph to save it. Use the paragraph menu to copy or share it with its source.",
+                "המקום האחרון נשמר אחרי עצירה קצרה בקריאה. לחצו על הכוכב ליד פסקה כדי לשמור אותה. מתפריט הפסקה, או בלחיצה ארוכה על כותרת הפסקה, ניתן להעתיק או לשתף אותה עם מקורה.",
+                "Your place is saved after a short pause. Tap the star by a paragraph to save it. Use the paragraph menu, or long-press the paragraph heading, to copy or share it with its source.",
             ))
             ListHeading(string("חיפוש בעברית", "Search in Hebrew"))
             InfoText(string(

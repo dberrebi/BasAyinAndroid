@@ -3,9 +3,9 @@ package app.basayin.android
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.widget.Toast
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,8 +45,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.onLongClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -195,11 +198,18 @@ private fun PassageView(store: BookStore, paragraph: Paragraph, textSize: Int, s
     val copyLabel = string("העתקה", "Copy passage")
     val shareLabel = string("שיתוף", "Share passage")
     val copiedLabel = string("הקטע הועתק", "Passage copied")
+    val actionsLabel = string("אפשרויות לפסקה", "Passage actions")
 
     Column(Modifier.fillMaxWidth()) {
         Column(Modifier.fillMaxWidth().padding(start = 18.dp, end = 18.dp, top = 5.dp, bottom = 18.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f).padding(vertical = 6.dp)) {
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .padding(vertical = 6.dp)
+                        .semantics { onLongClick(label = actionsLabel) { actions = true; true } }
+                        .pointerInput(paragraph.id) { detectTapGestures(onLongPress = { actions = true }) },
+                ) {
                     Text(passageLabel, fontFamily = menuFont(), color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.labelLarge)
                     if (reference != null) Text(reference, fontFamily = menuFont(), color = emphasis,
@@ -226,9 +236,7 @@ private fun PassageView(store: BookStore, paragraph: Paragraph, textSize: Int, s
                         })
                         DropdownMenuItem(text = { Text(shareLabel) }, onClick = {
                             actions = false
-                            val intent = Intent(Intent.ACTION_SEND).setType("text/plain")
-                                .putExtra(Intent.EXTRA_TEXT, exportedPassage(store, paragraph))
-                            context.startActivity(Intent.createChooser(intent, shareLabel))
+                            sharePlainText(context, exportedPassage(store, paragraph), shareLabel)
                         })
                     }
                 }
