@@ -6,6 +6,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -98,7 +99,12 @@ fun StudyTheme(settings: StudySettings, content: @Composable () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StudyToolbar(title: String, goBack: (() -> Unit)?, openFavourites: (() -> Unit)?) {
+fun StudyToolbar(
+    title: String,
+    goBack: (() -> Unit)?,
+    openFavourites: (() -> Unit)?,
+    onShare: (() -> Unit)? = null,
+) {
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -121,6 +127,11 @@ fun StudyToolbar(title: String, goBack: (() -> Unit)?, openFavourites: (() -> Un
             }
         },
         actions = {
+            if (onShare != null) {
+                IconButton(onClick = onShare) {
+                    Icon(Icons.Filled.Share, string("שיתוף", "Share"))
+                }
+            }
             if (openFavourites != null) {
                 IconButton(onClick = openFavourites) {
                     Icon(Icons.Filled.Star, string("מועדפים", "Favourites"), tint = StudyGold)

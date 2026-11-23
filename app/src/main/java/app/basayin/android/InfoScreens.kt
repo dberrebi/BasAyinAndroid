@@ -1,5 +1,7 @@
 package app.basayin.android
 
+import android.content.Context
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -61,6 +63,14 @@ fun SettingsScreen(settings: StudySettings, onChange: (StudySettings) -> Unit) {
             HorizontalDivider()
         }
         item {
+            ListHeading(string("פרטיות", "Privacy"))
+            SourceLink(string("מדיניות הפרטיות", "Privacy policy"), privacyPolicyUrl)
+            SettingsText(string(
+                "היישום אינו אוסף מידע. הקישור נפתח בדפדפן.",
+                "The app collects no data. The link opens in the browser.",
+            ))
+        }
+        item {
             ListHeading(string("גודל טקסט הקריאה", "Reading text size"))
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp)) {
                 Slider(value = size, onValueChange = { size = it }, valueRange = 18f..38f, steps = 19,
@@ -99,7 +109,11 @@ private fun SettingsText(text: String) {
 }
 
 @Composable
-fun AboutScreen(years: String) {
+fun AboutScreen(years: String, generatedUtc: String) {
+    val context = LocalContext.current
+    val version = remember(context) { installedVersion(context) }
+    val language = LocalStudyLanguage.current
+    val generated = formatGeneratedDate(generatedUtc, language)
     StudyList {
         item {
             ListHeading(string("הספר ומחברו", "The book and its author"))
@@ -135,12 +149,36 @@ fun AboutScreen(years: String) {
                 "הקריאה והחיפוש זמינים ללא חיבור לאינטרנט. היסטוריית הקריאה, המועדפים וההגדרות נשמרים במכשיר בלבד. קישורי המקורות נפתחים בדפדפן.",
                 "Reading and search work offline. Reading history, favourites, and settings are stored on this device. Source links open in your browser.",
             ))
-            SourceLink(
-                string("מדיניות הפרטיות", "Privacy policy"),
-                "https://bas-ayin-android-privacy.glad-horse-8503.chatgpt.site/",
+            SourceLink(string("מדיניות הפרטיות", "Privacy policy"), privacyPolicyUrl)
+        }
+        item {
+            Text(
+                aboutEditionLine(language, version.name, version.code, years, generated),
+                Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
+}
+
+private data class InstalledVersion(val name: String, val code: Long)
+
+private fun installedVersion(context: Context): InstalledVersion {
+    val manager = context.packageManager
+    val info = if (Build.VERSION.SDK_INT >= 33) {
+        manager.getPackageInfo(context.packageName, android.content.pm.PackageManager.PackageInfoFlags.of(0))
+    } else {
+        @Suppress("DEPRECATION")
+        manager.getPackageInfo(context.packageName, 0)
+    }
+    val code = if (Build.VERSION.SDK_INT >= 28) {
+        info.longVersionCode
+    } else {
+        @Suppress("DEPRECATION")
+        info.versionCode.toLong()
+    }
+    return InstalledVersion(info.versionName?.takeIf { it.isNotBlank() } ?: "1.0", code)
 }
 
 @Composable
@@ -154,8 +192,8 @@ fun HelpScreen() {
             ))
             ListHeading(string("המשך קריאה ומועדפים", "Resume and save passages"))
             InfoText(string(
-                "המקום האחרון נשמר אחרי עצירה קצרה בקריאה. לחצו על הכוכב ליד פסקה כדי לשמור אותה. מתפריט הפסקה ניתן להעתיק או לשתף אותה עם מקורה.",
-                "Your place is saved after a short pause. Tap the star by a paragraph to save it. Use the paragraph menu to copy or share it with its source.",
+                "המקום האחרון נשמר אחרי עצירה קצרה בקריאה. לחצו על הכוכב ליד פסקה כדי לשמור אותה. מתפריט הפסקה, או בלחיצה ארוכה על כותרת הפסקה, ניתן להעתיק או לשתף אותה עם מקורה.",
+                "Your place is saved after a short pause. Tap the star by a paragraph to save it. Use the paragraph menu, or long-press the paragraph heading, to copy or share it with its source.",
             ))
             ListHeading(string("חיפוש בעברית", "Search in Hebrew"))
             InfoText(string(

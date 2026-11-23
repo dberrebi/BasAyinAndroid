@@ -1,6 +1,11 @@
 package app.basayin.android
 
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 enum class Language { Hebrew, English }
 enum class Appearance { System, Light, Dark }
@@ -92,6 +97,64 @@ fun excerpt(markup: String, terms: List<String>): String {
     return (if (start > 0) "…" else "") + text.substring(start, space).trim() +
         (if (space < text.length) "…" else "")
 }
+
+fun appTitle(language: Language): String = Title("בת עין", "Bas Ayin").inLanguage(language)
+
+/** Public privacy page already linked from About. GitHub Pages is not the host yet. */
+const val privacyPolicyUrl = "https://bas-ayin-android-privacy.glad-horse-8503.chatgpt.site/"
+
+/** Home toolbar share: this week's reading, or only the app title when the calendar has none. */
+fun homeShareText(language: Language, weeklyTitle: String?): String {
+    val title = weeklyTitle?.takeIf { it.isNotBlank() } ?: return appTitle(language)
+    val week = Title("הלימוד השבועי: $title", "This week: $title").inLanguage(language)
+    return "${appTitle(language)}\n$week"
+}
+
+/** Reader toolbar share: the open section, or this week's combined title when several are open. */
+fun readerPortionTitle(language: Language, sections: List<Section>, reading: Reading?): String {
+    sections.singleOrNull()?.let { return it.name.inLanguage(language) }
+    if (reading != null && reading.sectionIds == sections.map(Section::id)) {
+        return reading.title.inLanguage(language)
+    }
+    val joined = sections.joinToString(" · ") { it.name.inLanguage(language) }
+    return joined.ifBlank { Title("קריאת השבוע", "This week").inLanguage(language) }
+}
+
+fun portionShareText(language: Language, portionTitle: String): String =
+    "${appTitle(language)}\n$portionTitle"
+
+/** Attribution under a reading. Two short lines, matching the iOS reader footer. */
+fun readingFooter(language: Language): String = Title(
+    "בת עין, מהדורת ירושלים 2001, מתוך ספריא.\nרישיון CC BY-NC 4.0 · שימוש לא מסחרי בלבד",
+    "Bat Ayin, Jerusalem 2001 edition, from Sefaria.\nLicence CC BY-NC 4.0 · non-commercial use only",
+).inLanguage(language)
+
+/** About footnote: version name, version code, calendar span, and the bundled text's date. */
+fun aboutEditionLine(
+    language: Language,
+    versionName: String,
+    versionCode: Long,
+    years: String,
+    generatedLabel: String,
+): String = Title(
+    "גרסה $versionName ($versionCode). לוח הלימוד $years. עודכן $generatedLabel.",
+    "Version $versionName ($versionCode). Reading calendar $years. Updated $generatedLabel.",
+).inLanguage(language)
+
+/** `generated_utc` from the bundled manifest, shown as a local medium date. */
+fun formatGeneratedDate(generatedUtc: String, language: Language, zone: ZoneId = ZoneId.systemDefault()): String {
+    val instant = runCatching { Instant.parse(generatedUtc) }.getOrNull() ?: return generatedUtc
+    val locale = if (language == Language.Hebrew) Locale.forLanguageTag("he-IL") else Locale.ENGLISH
+    return instant.atZone(zone).toLocalDate().format(
+        DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale),
+    )
+}
+
+/** Shown on the home card when Continue reading cannot open a passage. */
+fun resumePlaceholder(language: Language, savedPlaceMissing: Boolean): String = Title(
+    if (savedPlaceMissing) "המיקום השמור אינו נמצא בספר" else "עדיין אין מיקום שמור",
+    if (savedPlaceMissing) "The saved place is not in this edition" else "No saved place yet",
+).inLanguage(language)
 
 fun studyNumber(value: Int, language: Language): String {
     if (language == Language.English || value !in 1..999) return value.toString()

@@ -62,6 +62,8 @@ import kotlinx.coroutines.withContext
 fun HomeScreen(store: BookStore, state: StudyState, onOpen: (String) -> Unit, onResume: (Paragraph) -> Unit) {
     val language = LocalStudyLanguage.current
     val resume = state.history.firstNotNullOfOrNull(store::paragraph)
+    val resumeDetail = resume?.let { location(store, it) }
+        ?: resumePlaceholder(language, savedPlaceMissing = state.history.isNotEmpty())
     StudyList {
         item {
             Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -75,9 +77,11 @@ fun HomeScreen(store: BookStore, state: StudyState, onOpen: (String) -> Unit, on
                     string("קריאת השבוע", "This week"),
                     state.reading?.title?.inLanguage(language),
                 ) { onOpen("weekly") }
-                if (resume != null) {
-                    HomeCard(string("המשך קריאה", "Continue reading"), location(store, resume)) { onResume(resume) }
-                }
+                HomeCard(
+                    string("המשך קריאה", "Continue reading"),
+                    resumeDetail,
+                    enabled = resume != null,
+                ) { if (resume != null) onResume(resume) }
             }
         }
         item { MenuRow(string("חיפוש בספר", "Search the book")) { onOpen("search") } }
@@ -96,9 +100,10 @@ fun HomeScreen(store: BookStore, state: StudyState, onOpen: (String) -> Unit, on
 }
 
 @Composable
-private fun HomeCard(title: String, subtitle: String?, onClick: () -> Unit) {
+private fun HomeCard(title: String, subtitle: String?, enabled: Boolean = true, onClick: () -> Unit) {
     Card(
         onClick = onClick,
+        enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {

@@ -15,7 +15,7 @@ import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import org.json.JSONObject
 
-class BookStore private constructor(private val file: File) {
+class BookStore private constructor(private val file: File, val generatedUtc: String) {
     private val driver = BundledSQLiteDriver()
 
     val books: List<Book>
@@ -128,7 +128,7 @@ class BookStore private constructor(private val file: File) {
                     temp.delete()
                 }
             }
-            return BookStore(database)
+            return BookStore(database, manifest.optString("generated_utc"))
         }
     }
 }
