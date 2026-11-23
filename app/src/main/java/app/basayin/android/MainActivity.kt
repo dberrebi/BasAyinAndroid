@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -73,6 +74,8 @@ private fun BasAyin(state: StudyState, model: StudyModel) {
     }
 
     val nav = rememberNavController()
+    val context = LocalContext.current
+    val language = LocalStudyLanguage.current
     val currentState by rememberUpdatedState(state)
     val back: () -> Unit = remember(nav) { { nav.popBackStack() } }
     val openReader: (List<Int>, Int) -> Unit = remember(nav) {
@@ -83,7 +86,13 @@ private fun BasAyin(state: StudyState, model: StudyModel) {
 
     NavHost(nav, startDestination = "home") {
         composable("home") {
-            StudyPage(string("בת עין", "Bas Ayin"), favourites = { nav.navigate("favourites") }) {
+            val weeklyTitle = currentState.reading?.title?.inLanguage(language)
+            val shareLabel = string("שיתוף", "Share")
+            StudyPage(
+                string("בת עין", "Bas Ayin"),
+                favourites = { nav.navigate("favourites") },
+                onShare = { sharePlainText(context, homeShareText(language, weeklyTitle), shareLabel) },
+            ) {
                 HomeScreen(store, currentState, onOpen = { nav.navigate(it) }, onResume = openPassage)
             }
         }
@@ -149,9 +158,10 @@ private fun StudyPage(
     title: String,
     back: (() -> Unit)? = null,
     favourites: (() -> Unit)? = null,
+    onShare: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    Scaffold(topBar = { StudyToolbar(title, back, favourites) }) { padding ->
+    Scaffold(topBar = { StudyToolbar(title, back, favourites, onShare) }) { padding ->
         Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding).imePadding()) { content() }
     }
 }

@@ -36,6 +36,14 @@ class StudyTextTest {
     }
 
     @Test
+    fun homeShareUsesThisWeeksReadingOrTheAppTitle() {
+        assertEquals("בת עין", homeShareText(Language.Hebrew, null))
+        assertEquals("Bas Ayin", homeShareText(Language.English, "  "))
+        assertEquals("בת עין\nהלימוד השבועי: נשא", homeShareText(Language.Hebrew, "נשא"))
+        assertEquals("Bas Ayin\nThis week: Nasso", homeShareText(Language.English, "Nasso"))
+    }
+
+    @Test
     fun weekKeepsParashaOrderAndDeduplicatesFestivalDays() {
         val shabbat = LocalDate.of(2026, 5, 23)
         val weekly = Reading(shabbat, Title("נשא", "Nasso"), listOf(47))

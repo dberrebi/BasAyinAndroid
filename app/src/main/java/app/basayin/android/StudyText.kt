@@ -93,6 +93,15 @@ fun excerpt(markup: String, terms: List<String>): String {
         (if (space < text.length) "…" else "")
 }
 
+fun appTitle(language: Language): String = Title("בת עין", "Bas Ayin").inLanguage(language)
+
+/** Home toolbar share: this week's reading, or only the app title when the calendar has none. */
+fun homeShareText(language: Language, weeklyTitle: String?): String {
+    val title = weeklyTitle?.takeIf { it.isNotBlank() } ?: return appTitle(language)
+    val week = Title("הלימוד השבועי: $title", "This week: $title").inLanguage(language)
+    return "${appTitle(language)}\n$week"
+}
+
 fun studyNumber(value: Int, language: Language): String {
     if (language == Language.English || value !in 1..999) return value.toString()
     val ones = " אבגדהוזחט"
