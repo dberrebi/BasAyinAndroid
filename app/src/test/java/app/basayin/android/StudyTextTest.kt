@@ -44,6 +44,24 @@ class StudyTextTest {
     }
 
     @Test
+    fun portionShareUsesTheSectionOrTheCombinedWeek() {
+        assertEquals("בת עין\nבראשית", portionShareText(Language.Hebrew, "בראשית"))
+        assertEquals("Bas Ayin\nBereshit", portionShareText(Language.English, "Bereshit"))
+        val bereshit = Section(1, 1, Title("בראשית", "Bereshit"), "parasha", null, null)
+        val nasso = Section(47, 4, Title("נשא", "Nasso"), "parasha", null, null)
+        val shavuot = Section(45, 4, Title("שבועות", "Shavuot"), "festival", 1, null)
+        val week = Reading(
+            LocalDate.of(2026, 5, 23),
+            Title("נשא · שבועות", "Nasso and Shavuot"),
+            listOf(47, 45),
+        )
+        assertEquals("Bereshit", readerPortionTitle(Language.English, listOf(bereshit), week))
+        assertEquals("Nasso and Shavuot", readerPortionTitle(Language.English, listOf(nasso, shavuot), week))
+        assertEquals("נשא · שבועות", readerPortionTitle(Language.Hebrew, listOf(nasso, shavuot), null))
+        assertEquals("קריאת השבוע", readerPortionTitle(Language.Hebrew, emptyList(), null))
+    }
+
+    @Test
     fun weekKeepsParashaOrderAndDeduplicatesFestivalDays() {
         val shabbat = LocalDate.of(2026, 5, 23)
         val weekly = Reading(shabbat, Title("נשא", "Nasso"), listOf(47))

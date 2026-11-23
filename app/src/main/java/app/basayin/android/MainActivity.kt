@@ -141,9 +141,13 @@ private fun BasAyin(state: StudyState, model: StudyModel) {
         ) { entry ->
             val sections = entry.arguments?.getString("sections").orEmpty().split(',')
                 .mapNotNull { it.toIntOrNull()?.let(store::section) }
-            val title = sections.singleOrNull()?.name?.inLanguage(LocalStudyLanguage.current)
+            val title = sections.singleOrNull()?.name?.inLanguage(language)
                 ?: string("קריאת השבוע", "This week")
-            StudyPage(title, back) {
+            val portion = readerPortionTitle(language, sections, currentState.reading)
+            val shareLabel = string("שיתוף", "Share")
+            StudyPage(title, back, onShare = {
+                sharePlainText(context, portionShareText(language, portion), shareLabel)
+            }) {
                 ReaderScreen(
                     store, sections, entry.arguments?.getInt("passage") ?: 0,
                     currentState.settings.textSize, currentState.favourites, model::rememberPlace, model::toggleFavourite, openSection,

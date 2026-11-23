@@ -102,6 +102,19 @@ fun homeShareText(language: Language, weeklyTitle: String?): String {
     return "${appTitle(language)}\n$week"
 }
 
+/** Reader toolbar share: the open section, or this week's combined title when several are open. */
+fun readerPortionTitle(language: Language, sections: List<Section>, reading: Reading?): String {
+    sections.singleOrNull()?.let { return it.name.inLanguage(language) }
+    if (reading != null && reading.sectionIds == sections.map(Section::id)) {
+        return reading.title.inLanguage(language)
+    }
+    val joined = sections.joinToString(" · ") { it.name.inLanguage(language) }
+    return joined.ifBlank { Title("קריאת השבוע", "This week").inLanguage(language) }
+}
+
+fun portionShareText(language: Language, portionTitle: String): String =
+    "${appTitle(language)}\n$portionTitle"
+
 fun studyNumber(value: Int, language: Language): String {
     if (language == Language.English || value !in 1..999) return value.toString()
     val ones = " אבגדהוזחט"
