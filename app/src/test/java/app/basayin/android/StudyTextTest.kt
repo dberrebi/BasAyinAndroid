@@ -36,6 +36,14 @@ class StudyTextTest {
     }
 
     @Test
+    fun privacyPolicyLinkStaysOnThePublishedHost() {
+        assertEquals(
+            "https://bas-ayin-android-privacy.glad-horse-8503.chatgpt.site/",
+            privacyPolicyUrl,
+        )
+    }
+
+    @Test
     fun homeShareUsesThisWeeksReadingOrTheAppTitle() {
         assertEquals("בת עין", homeShareText(Language.Hebrew, null))
         assertEquals("Bas Ayin", homeShareText(Language.English, "  "))

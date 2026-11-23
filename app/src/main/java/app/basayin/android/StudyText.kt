@@ -95,6 +95,9 @@ fun excerpt(markup: String, terms: List<String>): String {
 
 fun appTitle(language: Language): String = Title("בת עין", "Bas Ayin").inLanguage(language)
 
+/** Public privacy page already linked from About. GitHub Pages is not the host yet. */
+const val privacyPolicyUrl = "https://bas-ayin-android-privacy.glad-horse-8503.chatgpt.site/"
+
 /** Home toolbar share: this week's reading, or only the app title when the calendar has none. */
 fun homeShareText(language: Language, weeklyTitle: String?): String {
     val title = weeklyTitle?.takeIf { it.isNotBlank() } ?: return appTitle(language)

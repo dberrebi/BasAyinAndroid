@@ -61,6 +61,14 @@ fun SettingsScreen(settings: StudySettings, onChange: (StudySettings) -> Unit) {
             HorizontalDivider()
         }
         item {
+            ListHeading(string("פרטיות", "Privacy"))
+            SourceLink(string("מדיניות הפרטיות", "Privacy policy"), privacyPolicyUrl)
+            SettingsText(string(
+                "היישום אינו אוסף מידע. הקישור נפתח בדפדפן.",
+                "The app collects no data. The link opens in the browser.",
+            ))
+        }
+        item {
             ListHeading(string("גודל טקסט הקריאה", "Reading text size"))
             Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp)) {
                 Slider(value = size, onValueChange = { size = it }, valueRange = 18f..38f, steps = 19,
@@ -135,10 +143,7 @@ fun AboutScreen(years: String) {
                 "הקריאה והחיפוש זמינים ללא חיבור לאינטרנט. היסטוריית הקריאה, המועדפים וההגדרות נשמרים במכשיר בלבד. קישורי המקורות נפתחים בדפדפן.",
                 "Reading and search work offline. Reading history, favourites, and settings are stored on this device. Source links open in your browser.",
             ))
-            SourceLink(
-                string("מדיניות הפרטיות", "Privacy policy"),
-                "https://bas-ayin-android-privacy.glad-horse-8503.chatgpt.site/",
-            )
+            SourceLink(string("מדיניות הפרטיות", "Privacy policy"), privacyPolicyUrl)
         }
     }
 }
