@@ -123,6 +123,12 @@ fun readerPortionTitle(language: Language, sections: List<Section>, reading: Rea
 fun portionShareText(language: Language, portionTitle: String): String =
     "${appTitle(language)}\n$portionTitle"
 
+/** Attribution under a reading. Two short lines, matching the iOS reader footer. */
+fun readingFooter(language: Language): String = Title(
+    "בת עין, מהדורת ירושלים 2001, מתוך ספריא.\nרישיון CC BY-NC 4.0 · שימוש לא מסחרי בלבד",
+    "Bat Ayin, Jerusalem 2001 edition, from Sefaria.\nLicence CC BY-NC 4.0 · non-commercial use only",
+).inLanguage(language)
+
 /** About footnote: version name, version code, calendar span, and the bundled text's date. */
 fun aboutEditionLine(
     language: Language,

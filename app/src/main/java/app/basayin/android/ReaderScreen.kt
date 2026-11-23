@@ -140,6 +140,15 @@ fun ReaderScreen(
                         }
                     }
                 }
+                item(key = "reading-footer") {
+                    Text(
+                        readingFooter(language),
+                        Modifier.fillMaxWidth().padding(start = 18.dp, end = 18.dp, top = 28.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
             }
         }
     }

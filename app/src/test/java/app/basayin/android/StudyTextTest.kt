@@ -71,6 +71,18 @@ class StudyTextTest {
     }
 
     @Test
+    fun readingFooterCreditsSefariaAndTheNoncommercialLicence() {
+        assertEquals(
+            "בת עין, מהדורת ירושלים 2001, מתוך ספריא.\nרישיון CC BY-NC 4.0 · שימוש לא מסחרי בלבד",
+            readingFooter(Language.Hebrew),
+        )
+        assertEquals(
+            "Bat Ayin, Jerusalem 2001 edition, from Sefaria.\nLicence CC BY-NC 4.0 · non-commercial use only",
+            readingFooter(Language.English),
+        )
+    }
+
+    @Test
     fun continueReadingExplainsAnEmptyOrMissingPlace() {
         assertEquals("עדיין אין מיקום שמור", resumePlaceholder(Language.Hebrew, savedPlaceMissing = false))
         assertEquals("No saved place yet", resumePlaceholder(Language.English, savedPlaceMissing = false))
