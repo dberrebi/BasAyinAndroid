@@ -133,7 +133,9 @@ private fun BasAyin(state: StudyState, model: StudyModel) {
         composable("settings") {
             StudyPage(string("הגדרות", "Settings"), back) { SettingsScreen(currentState.settings, model::updateSettings) }
         }
-        composable("about") { StudyPage(string("אודות", "About"), back) { AboutScreen(store.calendarYears) } }
+        composable("about") {
+            StudyPage(string("אודות", "About"), back) { AboutScreen(store.calendarYears, store.generatedUtc) }
+        }
         composable("help") { StudyPage(string("עזרה", "Help"), back) { HelpScreen() } }
         composable(
             "reader/{sections}/{passage}",

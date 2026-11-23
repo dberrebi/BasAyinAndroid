@@ -1,5 +1,7 @@
 package app.basayin.android
 
+import android.content.Context
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -107,7 +109,11 @@ private fun SettingsText(text: String) {
 }
 
 @Composable
-fun AboutScreen(years: String) {
+fun AboutScreen(years: String, generatedUtc: String) {
+    val context = LocalContext.current
+    val version = remember(context) { installedVersion(context) }
+    val language = LocalStudyLanguage.current
+    val generated = formatGeneratedDate(generatedUtc, language)
     StudyList {
         item {
             ListHeading(string("הספר ומחברו", "The book and its author"))
@@ -145,7 +151,34 @@ fun AboutScreen(years: String) {
             ))
             SourceLink(string("מדיניות הפרטיות", "Privacy policy"), privacyPolicyUrl)
         }
+        item {
+            Text(
+                aboutEditionLine(language, version.name, version.code, years, generated),
+                Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 12.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     }
+}
+
+private data class InstalledVersion(val name: String, val code: Long)
+
+private fun installedVersion(context: Context): InstalledVersion {
+    val manager = context.packageManager
+    val info = if (Build.VERSION.SDK_INT >= 33) {
+        manager.getPackageInfo(context.packageName, android.content.pm.PackageManager.PackageInfoFlags.of(0))
+    } else {
+        @Suppress("DEPRECATION")
+        manager.getPackageInfo(context.packageName, 0)
+    }
+    val code = if (Build.VERSION.SDK_INT >= 28) {
+        info.longVersionCode
+    } else {
+        @Suppress("DEPRECATION")
+        info.versionCode.toLong()
+    }
+    return InstalledVersion(info.versionName?.takeIf { it.isNotBlank() } ?: "1.0", code)
 }
 
 @Composable

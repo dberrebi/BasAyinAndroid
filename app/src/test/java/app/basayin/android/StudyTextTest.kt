@@ -1,6 +1,7 @@
 package app.basayin.android
 
 import java.time.LocalDate
+import java.time.ZoneOffset
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -49,6 +50,24 @@ class StudyTextTest {
         assertEquals("Bas Ayin", homeShareText(Language.English, "  "))
         assertEquals("בת עין\nהלימוד השבועי: נשא", homeShareText(Language.Hebrew, "נשא"))
         assertEquals("Bas Ayin\nThis week: Nasso", homeShareText(Language.English, "Nasso"))
+    }
+
+    @Test
+    fun aboutNamesVersionBuildAndTheBundledTextDate() {
+        assertEquals(
+            "Version 1.0 (12). Reading calendar 2025–2045. Updated Nov 21, 2026.",
+            aboutEditionLine(Language.English, "1.0", 12, "2025–2045", "Nov 21, 2026"),
+        )
+        assertEquals(
+            "גרסה 1.0 (12). לוח הלימוד 2025–2045. עודכן 21 בנוב׳ 2026.",
+            aboutEditionLine(Language.Hebrew, "1.0", 12, "2025–2045", "21 בנוב׳ 2026"),
+        )
+        assertEquals(
+            "Nov 21, 2026",
+            formatGeneratedDate("2026-11-21T20:16:08Z", Language.English, ZoneOffset.UTC),
+        )
+        assertTrue(formatGeneratedDate("2026-11-21T20:16:08Z", Language.Hebrew, ZoneOffset.UTC).contains("2026"))
+        assertEquals("not-a-date", formatGeneratedDate("not-a-date", Language.English, ZoneOffset.UTC))
     }
 
     @Test

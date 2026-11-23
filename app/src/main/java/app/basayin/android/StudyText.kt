@@ -1,6 +1,11 @@
 package app.basayin.android
 
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 enum class Language { Hebrew, English }
 enum class Appearance { System, Light, Dark }
@@ -117,6 +122,27 @@ fun readerPortionTitle(language: Language, sections: List<Section>, reading: Rea
 
 fun portionShareText(language: Language, portionTitle: String): String =
     "${appTitle(language)}\n$portionTitle"
+
+/** About footnote: version name, version code, calendar span, and the bundled text's date. */
+fun aboutEditionLine(
+    language: Language,
+    versionName: String,
+    versionCode: Long,
+    years: String,
+    generatedLabel: String,
+): String = Title(
+    "גרסה $versionName ($versionCode). לוח הלימוד $years. עודכן $generatedLabel.",
+    "Version $versionName ($versionCode). Reading calendar $years. Updated $generatedLabel.",
+).inLanguage(language)
+
+/** `generated_utc` from the bundled manifest, shown as a local medium date. */
+fun formatGeneratedDate(generatedUtc: String, language: Language, zone: ZoneId = ZoneId.systemDefault()): String {
+    val instant = runCatching { Instant.parse(generatedUtc) }.getOrNull() ?: return generatedUtc
+    val locale = if (language == Language.Hebrew) Locale.forLanguageTag("he-IL") else Locale.ENGLISH
+    return instant.atZone(zone).toLocalDate().format(
+        DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale),
+    )
+}
 
 /** Shown on the home card when Continue reading cannot open a passage. */
 fun resumePlaceholder(language: Language, savedPlaceMissing: Boolean): String = Title(
